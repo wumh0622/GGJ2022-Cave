@@ -35,35 +35,24 @@ public class PlayerController : MonoBehaviour
 	private bool _isJump = false;
 
 	private Rigidbody2D _rb;
-	private RaycastHit2D _hit;
+	private RaycastHit2D[] _hits;
 	public float frontDistance = 10;
 	void Start()
 	{
 		_rb = GetComponent<Rigidbody2D>();
-		_rb.gravityScale = 1;
 	}
 
 	void Update()
 	{
-		_hit = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y), Vector2.right, frontDistance);
-
-		if (_hit.collider == null)
-		{
-			_rb.velocity = new Vector2(_moveSpeed, _rb.velocity.y);
-		}
-		else
-		{
-			_rb.velocity = new Vector2(0, _rb.velocity.y);
-		}
-
+		Move();
 
 		if (_isUnderGround)
 		{
-			UnderGroundMove();
+			UnderGroundAction();
 		}
 		else
 		{
-			InGroundMove();
+			InGroundAction();
 		}
 
 		ChangePosStatus();
@@ -101,7 +90,31 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-	private void InGroundMove()
+	private void Move()
+	{
+		_hits = Physics2D.RaycastAll(new Vector2(transform.position.x, transform.position.y), Vector2.right, frontDistance);
+		bool hasObstacle = false;
+		foreach (var hit in _hits)
+		{
+			if (hit.collider != null && hit.collider.tag != "Player")
+			{
+				hasObstacle = true;
+				break;
+			}
+		}
+
+		if (hasObstacle)
+		{
+			_rb.velocity = new Vector2(0, _rb.velocity.y);
+		}
+		else
+		{
+			_rb.velocity = new Vector2(_moveSpeed, _rb.velocity.y);
+		}
+
+	}
+
+	private void InGroundAction()
 	{
 		if (_inGround)
 		{
@@ -120,7 +133,7 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-	private void UnderGroundMove()
+	private void UnderGroundAction()
 	{
 		if (Input.GetMouseButtonDown(0))
 		{
@@ -201,9 +214,10 @@ public class PlayerController : MonoBehaviour
 
 	public void OnDrawGizmosSelected()
 	{
+		//Gizmos.color = Color.white;
+		//Gizmos.DrawCube(transform.position + new Vector3(_digOffset.x, _digOffset.y, 0), new Vector3(_digSize.x, _digSize.y, 0));
+
 		Gizmos.color = Color.red;
 		Gizmos.DrawRay(transform.position, Vector3.right * frontDistance);
-		Gizmos.color = Color.white;
-		Gizmos.DrawCube(transform.position + new Vector3(_digOffset.x, _digOffset.y, 0), new Vector3(_digSize.x, _digSize.y, 0));
 	}
 }

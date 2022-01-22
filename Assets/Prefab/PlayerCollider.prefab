@@ -110,7 +110,7 @@ GameObject:
   - component: {fileID: 3096490098575909026}
   m_Layer: 0
   m_Name: PlayerCollider
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -122,7 +122,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3096490098575909049}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -10, y: 5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -148,13 +148,13 @@ MonoBehaviour:
   IsJump: 0
   Velocity: {x: 0, y: 0, z: 0}
   _moveSpeed: 5
-  _jumpSpeed: 40
+  _jumpSpeed: 85
   _digOffset: {x: 0.5, y: 0}
   _digSize: {x: 1, y: 2}
   _digLayerMask:
     serializedVersion: 2
     m_Bits: 64
-  frontDistance: 0.5
+  frontDistance: 0.66
 --- !u!50 &3096490098575909053
 Rigidbody2D:
   serializedVersion: 4
@@ -170,7 +170,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 3.8
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
