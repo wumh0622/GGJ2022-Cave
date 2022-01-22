@@ -20,7 +20,6 @@ public class Block : MonoBehaviour
     public GameObject goldBurstEffect;
     public GameObject treatureBlockEffect;
 
-    AudioSource audio;
     BoxCollider2D collider2D;
     Animation animation;
 
@@ -59,33 +58,38 @@ public class Block : MonoBehaviour
     {
         health--;
 
-        if(animation)
+        if (animation)
         {
             animation.Play();
         }
 
-        if (!audio)
-        {
-            audio = gameObject.AddComponent<AudioSource>();
-            audio.playOnAwake = false;
-            audio.outputAudioMixerGroup = audioGroup;
-        }
 
-        if(audio)
-        {
-            audio.clip = audioClips[Random.Range(0, audioClips.Length - 1)];
-            audio.pitch = Random.Range(0.5f, 1.5f);
-            audio.Play();
-        }
+        GameObject sound = new GameObject("BlockSound");
+        AudioSource source = sound.gameObject.AddComponent<AudioSource>();
+        source.playOnAwake = false;
+        source.outputAudioMixerGroup = audioGroup;
+        source.clip = audioClips[Random.Range(0, audioClips.Length - 1)];
 
         if (health == 0)
         {
-            if(score > 0)
+            source.pitch = Random.Range(0.4f, 0.6f);
+        }
+        else
+        {
+            source.pitch = Random.Range(0.5f, 1.5f);
+        }
+
+        source.Play();
+        Destroy(sound, source.clip.length);
+
+        if (health == 0)
+        {
+            if (score > 0)
             {
                 ScoreManager.instance.AddScore(score);
                 Instantiate(goldBurstEffect, transform.position, Quaternion.identity);
             }
-            
+
             Instantiate(destoryBlockEffect, transform.position, Quaternion.identity);
             Destroy(gameObject);
         }
