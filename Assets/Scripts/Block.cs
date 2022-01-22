@@ -7,7 +7,7 @@ using UnityEngine.Audio;
 [RequireComponent(typeof(Animation))]
 public class Block : MonoBehaviour
 {
-    public int health = 1;
+    public float health = 1;
     public int score = 0;
     public int scoreMutiply = 100;
     public AudioClip[] audioClips;
@@ -50,13 +50,13 @@ public class Block : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.R))
         {
-            Mining();
+            Mining(1.0f);
         }
     }
 
-    public void Mining()
+    public void Mining(float damage)
     {
-        health--;
+        health-= damage;
 
         if (animation)
         {
