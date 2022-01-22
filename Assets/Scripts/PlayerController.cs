@@ -14,11 +14,17 @@ public class PlayerController : MonoBehaviour
 
 	[Header("Setting Param")]
 	[SerializeField]
-	private float moveSpeed = 0;
+	private float _moveSpeed = 0;
 
 	[SerializeField]
-	private float jumpSpeed = 0;
+	private float _jumpSpeed = 0;
 
+	[Header("DigBox")]
+	[SerializeField]
+	private BoxCollider2D _digBox;
+
+	[SerializeField]
+	private LayerMask _digLayerMask;
 
 	private bool _isUnderGround = false;
 	private bool _inGround = false;
@@ -34,7 +40,7 @@ public class PlayerController : MonoBehaviour
 
 	void Update()
 	{
-		transform.Translate(Vector3.right * moveSpeed * Time.deltaTime);
+		transform.Translate(Vector3.right * _moveSpeed * Time.deltaTime);
 
 		if (_isUnderGround)
 		{
@@ -110,9 +116,7 @@ public class PlayerController : MonoBehaviour
 	{
 		print("Jump");
 
-		_inGround = false;
-
-		_rb.AddForce(Vector3.up * jumpSpeed * 10);
+		_rb.AddForce(Vector3.up * _jumpSpeed * 10);
 	}
 
 	private void Down(bool isDown)
@@ -131,15 +135,35 @@ public class PlayerController : MonoBehaviour
 
 	private void Dig()
 	{
-		print("Dig");
+		var point = new Vector2(transform.position.x, transform.position.y) + _digBox.offset;
+		var colliders = Physics2D.OverlapBoxAll(point, _digBox.size, 0, (int)_digLayerMask);
+
+		if (colliders.Length > 0)
+		{
+			print("Dig");
+
+			foreach (var collider in colliders)
+			{
+				collider.GetComponent<Block>().Mining();
+			}
+		}
 	}
 
 	private void OnTriggerEnter(Collider other)
 	{
-		if (other.tag == "Ground" && !_inGround)
+		if (other.tag == "Ground")
 		{
 			print($"TriggerEnter {other.name}");
 			_inGround = true;
+		}
+	}
+
+	private void OnTriggerExit(Collider other)
+	{
+		if (other.tag == "Ground")
+		{
+			print($"TriggerExit {other.name}");
+			_inGround = false;
 		}
 	}
 }
