@@ -196,40 +196,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &423385742 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1113101072244196675, guid: 85677421ee3d9dc43a43f8e11b6595ad, type: 3}
-  m_PrefabInstance: {fileID: 436609143}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &423385743
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 423385742}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e07b246c45136724ebdef492c0da8887, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  defaultBlock: {fileID: 2118969129379688132, guid: a8904456c7d6f08418b619ca19d663e0, type: 3}
-  mapSize: {x: 30, y: 8}
-  gap: 1.28
-  startTransform: {fileID: 961392896}
-  SETTINGMODE: 1
---- !u!4 &423385744 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8987091269840802566, guid: 85677421ee3d9dc43a43f8e11b6595ad, type: 3}
-  m_PrefabInstance: {fileID: 436609143}
-  m_PrefabAsset: {fileID: 0}
---- !u!1001 &436609143
+--- !u!1001 &437137868
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 445827962802138116, guid: 85677421ee3d9dc43a43f8e11b6595ad, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 445827962802138116, guid: 85677421ee3d9dc43a43f8e11b6595ad, type: 3}
+      propertyPath: m_UsedByComposite
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1113101072244196675, guid: 85677421ee3d9dc43a43f8e11b6595ad, type: 3}
       propertyPath: m_Name
       value: CaveRoom0 (1)
@@ -240,15 +221,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8987091269840802566, guid: 85677421ee3d9dc43a43f8e11b6595ad, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.07
+      value: -2.8285136
       objectReference: {fileID: 0}
     - target: {fileID: 8987091269840802566, guid: 85677421ee3d9dc43a43f8e11b6595ad, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -10.48
+      value: -1.3416533
       objectReference: {fileID: 0}
     - target: {fileID: 8987091269840802566, guid: 85677421ee3d9dc43a43f8e11b6595ad, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -16.369293
       objectReference: {fileID: 0}
     - target: {fileID: 8987091269840802566, guid: 85677421ee3d9dc43a43f8e11b6595ad, type: 3}
       propertyPath: m_LocalRotation.w
@@ -330,7 +311,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -359,36 +340,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 579521267}
   m_CullTransparentMesh: 1
---- !u!1 &961392895
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 961392896}
-  m_Layer: 0
-  m_Name: GameObject
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &961392896
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 961392895}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.45, y: 3.23, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 423385744}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1095975705
 GameObject:
   m_ObjectHideFlags: 0
@@ -420,6 +371,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mPlayerCenterPos: {fileID: 1721226066}
   mMapCenter: {x: -8.77, y: 2.14}
+  onMapCreate:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &1095975707
 Transform:
   m_ObjectHideFlags: 0
@@ -471,7 +425,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4097942766200627456, guid: 52aa3957bfb9d794d9e506552113c628, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4097942766200627456, guid: 52aa3957bfb9d794d9e506552113c628, type: 3}
       propertyPath: m_LocalPosition.x
@@ -701,25 +655,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1441288226 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4422054736868378873, guid: a1ae63505b0a25e409a10284ae7bdb57, type: 3}
-  m_PrefabInstance: {fileID: 4422054737204668957}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1441288227
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1441288226}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f762e40211ecdb439a1fddf73c5bb21, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mapManager: {fileID: 1095975706}
-  player: {fileID: 1721226065}
 --- !u!1 &1447094479 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 132536, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
@@ -1145,6 +1080,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1441288227, guid: a1ae63505b0a25e409a10284ae7bdb57, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1721226065}
+    - target: {fileID: 1441288227, guid: a1ae63505b0a25e409a10284ae7bdb57, type: 3}
+      propertyPath: mapManager
+      value: 
+      objectReference: {fileID: 1095975706}
     - target: {fileID: 4422054736868378872, guid: a1ae63505b0a25e409a10284ae7bdb57, type: 3}
       propertyPath: player
       value: 

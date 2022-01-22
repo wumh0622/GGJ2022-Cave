@@ -17,6 +17,8 @@ public class GameFlow : MonoBehaviour
     public MapManager mapManager;
     public GameObject player;
 
+    public int maxMapCount = 10;
+
     private void Awake()
     {
         if (!instance)
@@ -29,7 +31,16 @@ public class GameFlow : MonoBehaviour
     public void Start()
     {
         mapManager.CreatMap_Start();
+        mapManager.onMapCreate.AddListener(OnRoomCreate);
         player.SetActive(true);
+    }
+
+    void OnRoomCreate(int count)
+    {
+        if(count + 1 > maxMapCount)
+        {
+            mapManager.CreatMap_StartEnd();
+        }
     }
 
 }
