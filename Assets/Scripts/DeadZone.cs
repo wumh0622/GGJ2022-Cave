@@ -5,20 +5,37 @@ using UnityEngine;
 public class DeadZone : MonoBehaviour
 {
 
-    public float speed;
+    public AnimationCurve speedCurve;
+    bool begin;
+    float timer;
+
     // Start is called before the first frame update
     void Start()
     {
         
     }
 
+    public void GameStart()
+    {
+        begin = true;
+    }
+
+    public void GameStop()
+    {
+        begin = false;
+    }
+
     // Update is called once per frame
     void Update()
     {
-        transform.Translate(new Vector3(speed, 0, 0));
+        if(begin)
+        {
+            timer += Time.deltaTime;
+            transform.Translate(new Vector3(speedCurve.Evaluate(timer), 0, 0));
+        }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if(other.gameObject.tag == "Player")
         {

@@ -16,6 +16,7 @@ public class GameFlow : MonoBehaviour
 
     public MapManager mapManager;
     public PlayerController player;
+    public DeadZone[] deadZones;
 
     public int maxMapCount = 10;
 
@@ -33,11 +34,24 @@ public class GameFlow : MonoBehaviour
         mapManager.CreatMap_Start();
         mapManager.onMapCreate.AddListener(OnRoomCreate);
         player.gameObject.SetActive(true);
+        foreach (DeadZone item in deadZones)
+        {
+            item.GameStart();
+        }
     }
 
     public void Dead()
     {
         player.enabled = false;
+        Invoke("StopLava", 10.0f);
+    }
+
+    public void StopLava()
+    {
+        foreach (DeadZone item in deadZones)
+        {
+            item.GameStop();
+        }
     }
 
     void OnRoomCreate(int count)
