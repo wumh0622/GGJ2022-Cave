@@ -15,7 +15,7 @@ public class GameFlow : MonoBehaviour
     public static GameFlow instance;
 
     public MapManager mapManager;
-    public GameObject player;
+    public PlayerController player;
 
     public int maxMapCount = 10;
 
@@ -25,14 +25,19 @@ public class GameFlow : MonoBehaviour
         {
             instance = this;
         }
-        player.SetActive(false);
+        player.gameObject.SetActive(false);
     }
 
     public void Start()
     {
         mapManager.CreatMap_Start();
         mapManager.onMapCreate.AddListener(OnRoomCreate);
-        player.SetActive(true);
+        player.gameObject.SetActive(true);
+    }
+
+    public void Dead()
+    {
+        player.enabled = false;
     }
 
     void OnRoomCreate(int count)
