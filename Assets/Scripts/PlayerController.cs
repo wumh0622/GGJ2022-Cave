@@ -17,13 +17,13 @@ public class PlayerController : MonoBehaviour
 
 
 	[Header("Base Param")]
-	public float OriginMoveSpeed = 5;
-	public float JumpSpeed = 60;
-	public float FrontCheckDistance = 0.5f;
-	public float OriginAttack = 1;
+	public float OriginMoveSpeed = 5f;
+	public float JumpSpeed = 60f;
+	public float OriginAttack = 1f;
+	public float FrontCheckDistance = 0.6f;
 
 	[Header("UnderGroundMove")]
-	public float MinRange = 3;
+	public float MinRange = 3f;
 
 	[Header("DigBox")]
 	public Vector2 DigOffset;
@@ -41,24 +41,23 @@ public class PlayerController : MonoBehaviour
 	private bool _isJump = false;
 
 	private Rigidbody2D _rb;
-	private RaycastHit2D[] _hits;
 	private float _originGravityScale;
 
-	private Dictionary<string, float> _itemEffectTimer;
+	private float _itemEffectSec;
+	private string _itemType;
 
 	void Start()
 	{
-		_itemEffectTimer = new Dictionary<string, float>();
-
 		_rb = GetComponent<Rigidbody2D>();
 		_originGravityScale = _rb.gravityScale;
 
+		_moveSpeed = OriginMoveSpeed;
+		_attack = OriginAttack;
 		_jumpSpeed = JumpSpeed;
 	}
 
 	void FixedUpdate()
 	{
-
 		if (_isUnderGround)
 		{
 			UnderGroundAction();
@@ -79,15 +78,12 @@ public class PlayerController : MonoBehaviour
 
 	private void ItemTimer()
 	{
-		var deltaTime = Time.fixedDeltaTime;
-
-		foreach (var itemType in _itemEffectTimer.Keys)
+		if (_itemEffectSec > 0)
 		{
-			_itemEffectTimer[itemType] -= deltaTime;
-			if (_itemEffectTimer[itemType] <= 0)
+			_itemEffectSec -= Time.fixedDeltaTime;
+			if (_itemEffectSec <= 0)
 			{
-				_itemEffectTimer.Remove(itemType);
-				OnItemTimeOut(itemType);
+				OnItemTimeOut(_itemType);
 			}
 		}
 	}
@@ -104,7 +100,7 @@ public class PlayerController : MonoBehaviour
 			if (_isUnderGround)
 			{
 				_rb.gravityScale = 0;
-				SetVelocity(_rb.velocity.x, 0);
+				SetVelocity(_rb.velocity.x, 0, false);
 			}
 			else
 			{
@@ -146,12 +142,14 @@ public class PlayerController : MonoBehaviour
 	#region Move
 	private void Move()
 	{
-		_hits = Physics2D.RaycastAll(new Vector2(transform.position.x, transform.position.y), Vector2.right, FrontCheckDistance);
+		var point = new Vector2(transform.position.x, transform.position.y);
+		var hits = Physics2D.RaycastAll(point, Vector2.right, FrontCheckDistance);
 
 		var speed = _moveSpeed;
-		foreach (var hit in _hits)
+
+		foreach (var hit in hits)
 		{
-			if (hit.collider != null && hit.collider.tag != "Player")
+			if (hit.collider != null && !hit.collider.isTrigger && hit.collider.tag != "Player")
 			{
 				speed = 0;
 				break;
@@ -175,11 +173,11 @@ public class PlayerController : MonoBehaviour
 		}
 		else
 		{
-			SetVelocity(_rb.velocity.x, 0);
+			SetVelocity(_rb.velocity.x, 0, false);
 		}
 	}
 
-	private void SetVelocity(float newX, float newY)
+	private void SetVelocity(float newX, float newY, bool alwaysRefresh = true)
 	{
 		float x = _rb.velocity.x;
 		float y = _rb.velocity.y;
@@ -197,7 +195,7 @@ public class PlayerController : MonoBehaviour
 			y = newY;
 		}
 
-		if (!isSame)
+		if (alwaysRefresh || !isSame)
 		{
 			_rb.velocity = new Vector2(x, y);
 		}
@@ -240,40 +238,44 @@ public class PlayerController : MonoBehaviour
 
 		foreach (var collider in colliders)
 		{
-			if (!collider.TryGetComponent<Block>(out var block))
-			{
-				Debug.LogError($"Collider {collider.name} No Block.cs");
-				continue;
-			}
-
+			var block = collider.GetComponent<Block>();
 			block.Mining(_attack);
 		}
 	}
 
-	private void OnGetItem(string itemType, float newValue)
+	private void OnGetItem(ItemInfo itemInfo)
 	{
-		if (newValue < 0)
+		itemInfo.GetItemInfo(out var itemType, out var value, out var effectSec);
+
+		if (value < 0)
 		{
-			Debug.LogError("Invalid Value " + newValue);
+			Debug.LogError("Invalid Value " + value);
 			return;
 		}
+
+		print($"Get New Item {itemType}, Value = {value}");
 
 		switch (itemType)
 		{
 			case "Move":
-				_moveSpeed = newValue;
+				_moveSpeed = value;
 				break;
 			case "Attack":
-				_attack = newValue;
+				_attack = value;
 				break;
 			default:
 				Debug.LogError("Invalid ItemType " + itemType);
 				break;
 		}
+
+		_itemType = itemType;
+		_itemEffectSec = effectSec;
 	}
 
 	private void OnItemTimeOut(string itemType)
 	{
+		print($"Item {itemType} Timeout");
+
 		switch (itemType)
 		{
 			case "Move":
@@ -300,19 +302,15 @@ public class PlayerController : MonoBehaviour
 
 	private void OnTriggerEnter2D(Collider2D other)
 	{
-		switch (other.tag)
+		if (other.tag == "Ground")
 		{
-			case "Ground":
-				_isJump = false;
-				print($"TriggerEnter Jump {_isJump}, Ground {_inGround}");
-				break;
-			case "Item":
-				other.GetComponent<ItemInfo>().GetItemInfo(out string itemType, out float value, out float effectSec);
-				_itemEffectTimer[itemType] = effectSec;
-				OnGetItem(itemType, value);
-				break;
-			default:
-				break;
+			_isJump = false;
+			//print($"TriggerEnter Jump {_isJump}, Ground {_inGround}");
+		}
+		else if (other.tag == "Item")
+		{
+			var itemData = other.GetComponent<ItemInfo>();
+			OnGetItem(itemData);
 		}
 	}
 
@@ -321,7 +319,7 @@ public class PlayerController : MonoBehaviour
 		if (other.tag == "Ground" && !_isJump)
 		{
 			_inGround = true;
-			print($"TriggerStay Jump {_isJump}, Ground {_inGround}");
+			//print($"TriggerStay Jump {_isJump}, Ground {_inGround}");
 		}
 	}
 
@@ -330,8 +328,7 @@ public class PlayerController : MonoBehaviour
 		if (other.tag == "Ground")
 		{
 			_inGround = false;
-
-			print($"TriggerExit Jump {_isJump}, Ground {_inGround}");
+			//print($"TriggerExit Jump {_isJump}, Ground {_inGround}");
 		}
 	}
 
@@ -340,13 +337,16 @@ public class PlayerController : MonoBehaviour
 		if (ShowDigBox)
 		{
 			Gizmos.color = Color.white;
-			Gizmos.DrawCube(transform.position + new Vector3(DigOffset.x, DigOffset.y, 0), new Vector3(DigSize.x, DigSize.y, 0));
+			var center = transform.position + new Vector3(DigOffset.x, DigOffset.y, 0);
+			var size = new Vector3(DigSize.x, DigSize.y, 0);
+			Gizmos.DrawCube(center, size);
 		}
 
 		if (ShowFrontCheck)
 		{
 			Gizmos.color = Color.red;
-			Gizmos.DrawRay(transform.position, Vector3.right * FrontCheckDistance);
+			var direct = Vector3.right * FrontCheckDistance;
+			Gizmos.DrawRay(transform.position, direct);
 		}
 	}
 }
