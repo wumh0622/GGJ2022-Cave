@@ -10,18 +10,21 @@ public class PlayerController : MonoBehaviour
 	public bool IsInGround;
 	public bool IsDown;
 	public bool IsUnderGround;
+	public bool IsJump;
 	public Vector3 Velocity;
 
 	[Header("Setting Param")]
 	[SerializeField]
-	private float _moveSpeed = 0;
+	private float _moveSpeed = 2;
 
 	[SerializeField]
-	private float _jumpSpeed = 0;
+	private float _jumpSpeed = 15;
 
 	[Header("DigBox")]
 	[SerializeField]
-	private BoxCollider2D _digBox;
+	private Vector2 _digOffset;
+	[SerializeField]
+	private Vector2 _digSize;
 
 	[SerializeField]
 	private LayerMask _digLayerMask;
@@ -29,18 +32,25 @@ public class PlayerController : MonoBehaviour
 	private bool _isUnderGround = false;
 	private bool _inGround = false;
 	private bool _isDown = false;
+	private bool _isJump = false;
 
-	private Rigidbody _rb;
-
+	private Rigidbody2D _rb;
+	private RaycastHit2D _hit;
+	public float frontDistance = 10;
 	void Start()
 	{
-		_rb = GetComponent<Rigidbody>();
-		_rb.useGravity = true;
+		_rb = GetComponent<Rigidbody2D>();
+		_rb.gravityScale = 1;
 	}
 
 	void Update()
 	{
-		transform.Translate(Vector3.right * _moveSpeed * Time.deltaTime);
+		_hit = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y), Vector2.right, frontDistance);
+
+		if (_hit.collider != null)
+		{
+			_rb.velocity = new Vector2(_moveSpeed, _rb.velocity.y);
+		}
 
 		if (_isUnderGround)
 		{
@@ -63,6 +73,7 @@ public class PlayerController : MonoBehaviour
 		IsInGround = _inGround;
 		IsDown = _isDown;
 		Velocity = _rb.velocity;
+		IsJump = _isJump;
 	}
 
 	private void ChangePosStatus()
@@ -75,12 +86,12 @@ public class PlayerController : MonoBehaviour
 
 			if (_isUnderGround)
 			{
-				_rb.useGravity = false;
-				_rb.velocity = Vector3.zero;
+				_rb.gravityScale = 0;
+				_rb.velocity = Vector2.right * _moveSpeed;
 			}
 			else
 			{
-				_rb.useGravity = true;
+				_rb.gravityScale = 1;
 			}
 		}
 	}
@@ -89,7 +100,7 @@ public class PlayerController : MonoBehaviour
 	{
 		if (_inGround)
 		{
-			if (Input.GetKeyDown(KeyCode.W) && !_isDown)
+			if (Input.GetKeyDown(KeyCode.W) && !_isDown && !_isJump)
 			{
 				Jump();
 			}
@@ -114,9 +125,9 @@ public class PlayerController : MonoBehaviour
 
 	private void Jump()
 	{
-		print("Jump");
-
-		_rb.AddForce(Vector3.up * _jumpSpeed * 10);
+		_isJump = true;
+		print($"Jump   Jump {_isJump}, Ground {_inGround}");
+		_rb.AddForce(Vector2.up * _jumpSpeed * 10);
 	}
 
 	private void Down(bool isDown)
@@ -135,8 +146,8 @@ public class PlayerController : MonoBehaviour
 
 	private void Dig()
 	{
-		var point = new Vector2(transform.position.x, transform.position.y) + _digBox.offset;
-		var colliders = Physics2D.OverlapBoxAll(point, _digBox.size, 0, (int)_digLayerMask);
+		var point = new Vector2(transform.position.x, transform.position.y) + _digOffset;
+		var colliders = Physics2D.OverlapBoxAll(point, _digSize, 0, (int)_digLayerMask);
 
 		if (colliders.Length > 0)
 		{
@@ -144,26 +155,50 @@ public class PlayerController : MonoBehaviour
 
 			foreach (var collider in colliders)
 			{
-				collider.GetComponent<Block>().Mining();
+				if (!collider.TryGetComponent<Block>(out var block))
+				{
+					Debug.LogError($"Collider {collider.name} No Block.cs");
+					continue;
+				}
+
+				block.Mining();
 			}
 		}
 	}
 
-	private void OnTriggerEnter(Collider other)
+	private void OnTriggerEnter2D(Collider2D other)
 	{
 		if (other.tag == "Ground")
 		{
-			print($"TriggerEnter {other.name}");
-			_inGround = true;
+			_isJump = false;
+			print($"TriggerEnter Jump {_isJump}, Ground {_inGround}");
 		}
 	}
 
-	private void OnTriggerExit(Collider other)
+	private void OnTriggerStay2D(Collider2D other)
+	{
+		if (other.tag == "Ground" && !_isJump)
+		{
+			_inGround = true;
+			print($"TriggerStay Jump {_isJump}, Ground {_inGround}");
+		}
+	}
+
+	private void OnTriggerExit2D(Collider2D other)
 	{
 		if (other.tag == "Ground")
 		{
-			print($"TriggerExit {other.name}");
 			_inGround = false;
+
+			print($"TriggerExit Jump {_isJump}, Ground {_inGround}");
 		}
+	}
+
+	public void OnDrawGizmosSelected()
+	{
+		Gizmos.color = Color.red;
+		Gizmos.DrawRay(transform.position, Vector3.right * frontDistance);
+		Gizmos.color = Color.white;
+		Gizmos.DrawCube(transform.position + new Vector3(_digOffset.x, _digOffset.y, 0), new Vector3(_digSize.x, _digSize.y, 0));
 	}
 }
