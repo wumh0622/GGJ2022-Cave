@@ -47,10 +47,15 @@ public class PlayerController : MonoBehaviour
 	{
 		_hit = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y), Vector2.right, frontDistance);
 
-		if (_hit.collider != null)
+		if (_hit.collider == null)
 		{
 			_rb.velocity = new Vector2(_moveSpeed, _rb.velocity.y);
 		}
+		else
+		{
+			_rb.velocity = new Vector2(0, _rb.velocity.y);
+		}
+
 
 		if (_isUnderGround)
 		{
