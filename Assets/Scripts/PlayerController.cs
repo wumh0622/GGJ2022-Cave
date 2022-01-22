@@ -4,28 +4,35 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-
-
-	[Header("Only Show")]
+	[Header("Status Info")]
 	public bool IsInGround;
 	public bool IsDown;
 	public bool IsUnderGround;
 	public bool IsJump;
 	public Vector3 Velocity;
 
+	[Header("Show Collider")]
+	public bool ShowDigBox;
+	public bool ShowFrontCheck;
+
+
 	[Header("Setting Param")]
 	[SerializeField]
-	private float _moveSpeed = 2;
-
+	private float _moveSpeed = 5;
 	[SerializeField]
-	private float _jumpSpeed = 15;
+	private float _jumpSpeed = 60;
+	[SerializeField]
+	private float frontCheckDistance = 0.5f;
+
+	[Header("UnderGroundMove")]
+	[SerializeField]
+	private float _minDistance = 3;
 
 	[Header("DigBox")]
 	[SerializeField]
 	private Vector2 _digOffset;
 	[SerializeField]
 	private Vector2 _digSize;
-
 	[SerializeField]
 	private LayerMask _digLayerMask;
 
@@ -36,10 +43,12 @@ public class PlayerController : MonoBehaviour
 
 	private Rigidbody2D _rb;
 	private RaycastHit2D[] _hits;
-	public float frontDistance = 10;
+	private float _originGravityScale;
+
 	void Start()
 	{
 		_rb = GetComponent<Rigidbody2D>();
+		_originGravityScale = _rb.gravityScale;
 	}
 
 	void Update()
@@ -60,16 +69,6 @@ public class PlayerController : MonoBehaviour
 		Show();
 	}
 
-	private void Show()
-	{
-		//Show
-		IsUnderGround = _isUnderGround;
-		IsInGround = _inGround;
-		IsDown = _isDown;
-		Velocity = _rb.velocity;
-		IsJump = _isJump;
-	}
-
 	private void ChangePosStatus()
 	{
 		if (Input.GetKeyDown(KeyCode.Q))
@@ -81,37 +80,30 @@ public class PlayerController : MonoBehaviour
 			if (_isUnderGround)
 			{
 				_rb.gravityScale = 0;
-				_rb.velocity = Vector2.right * _moveSpeed;
+				_rb.velocity = new Vector2(_rb.velocity.x, 0);
 			}
 			else
 			{
-				_rb.gravityScale = 1;
+				_rb.gravityScale = _originGravityScale;
 			}
 		}
 	}
 
 	private void Move()
 	{
-		_hits = Physics2D.RaycastAll(new Vector2(transform.position.x, transform.position.y), Vector2.right, frontDistance);
-		bool hasObstacle = false;
+		_hits = Physics2D.RaycastAll(new Vector2(transform.position.x, transform.position.y), Vector2.right, frontCheckDistance);
+
+		var speed = _moveSpeed;
 		foreach (var hit in _hits)
 		{
 			if (hit.collider != null && hit.collider.tag != "Player")
 			{
-				hasObstacle = true;
+				speed = 0;
 				break;
 			}
 		}
 
-		if (hasObstacle)
-		{
-			_rb.velocity = new Vector2(0, _rb.velocity.y);
-		}
-		else
-		{
-			_rb.velocity = new Vector2(_moveSpeed, _rb.velocity.y);
-		}
-
+		_rb.velocity = new Vector2(speed, _rb.velocity.y);
 	}
 
 	private void InGroundAction()
@@ -135,9 +127,29 @@ public class PlayerController : MonoBehaviour
 
 	private void UnderGroundAction()
 	{
+		UnderGroundMove();
+
 		if (Input.GetMouseButtonDown(0))
 		{
 			Dig();
+		}
+	}
+
+	private void UnderGroundMove()
+	{
+		var screenPos = Camera.main.WorldToScreenPoint(transform.position);
+		var moveY = Input.mousePosition.y - screenPos.y;
+
+		var distance = Mathf.Abs(moveY);
+		if (distance >= _minDistance)
+		{
+			bool isNegative = moveY < 0;
+
+			_rb.velocity = new Vector2(_rb.velocity.x, isNegative ? -_moveSpeed : _moveSpeed);
+		}
+		else if (_rb.velocity.y != 0)
+		{
+			_rb.velocity = new Vector2(_rb.velocity.x, 0);
 		}
 	}
 
@@ -184,6 +196,16 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
+	private void Show()
+	{
+		//Show
+		IsUnderGround = _isUnderGround;
+		IsInGround = _inGround;
+		IsDown = _isDown;
+		Velocity = _rb.velocity;
+		IsJump = _isJump;
+	}
+
 	private void OnTriggerEnter2D(Collider2D other)
 	{
 		if (other.tag == "Ground")
@@ -214,10 +236,16 @@ public class PlayerController : MonoBehaviour
 
 	public void OnDrawGizmosSelected()
 	{
-		//Gizmos.color = Color.white;
-		//Gizmos.DrawCube(transform.position + new Vector3(_digOffset.x, _digOffset.y, 0), new Vector3(_digSize.x, _digSize.y, 0));
+		if (ShowDigBox)
+		{
+			Gizmos.color = Color.white;
+			Gizmos.DrawCube(transform.position + new Vector3(_digOffset.x, _digOffset.y, 0), new Vector3(_digSize.x, _digSize.y, 0));
+		}
 
-		Gizmos.color = Color.red;
-		Gizmos.DrawRay(transform.position, Vector3.right * frontDistance);
+		if (ShowFrontCheck)
+		{
+			Gizmos.color = Color.red;
+			Gizmos.DrawRay(transform.position, Vector3.right * frontCheckDistance);
+		}
 	}
 }

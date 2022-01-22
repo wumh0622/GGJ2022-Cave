@@ -147,14 +147,18 @@ MonoBehaviour:
   IsUnderGround: 0
   IsJump: 0
   Velocity: {x: 0, y: 0, z: 0}
+  ShowDigBox: 0
+  ShowFrontCheck: 0
+  ShowMinDis: 0
   _moveSpeed: 5
   _jumpSpeed: 85
+  frontCheckDistance: 0.66
+  _minDistance: 70
   _digOffset: {x: 0.5, y: 0}
   _digSize: {x: 1, y: 2}
   _digLayerMask:
     serializedVersion: 2
     m_Bits: 64
-  frontDistance: 0.66
 --- !u!50 &3096490098575909053
 Rigidbody2D:
   serializedVersion: 4
