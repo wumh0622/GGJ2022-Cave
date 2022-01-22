@@ -140,12 +140,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 100
   score: 0
+  scoreMutiply: 100
   audioClips:
   - {fileID: 8300000, guid: e84c724fbae0c3842af20053c36811ed, type: 3}
   - {fileID: 8300000, guid: af530252780fc6e4e93218d21d38503e, type: 3}
   - {fileID: 8300000, guid: ae8678d011aa80c479496f007b09b6ed, type: 3}
   audioGroup: {fileID: 4237874895278249632, guid: 7add0758692660846906dd98cb82bfb7, type: 2}
   hit: 0
-  layerMask:
+  haveScoreRate: 0.4
+  scoreRateCurve:
     serializedVersion: 2
-    m_Bits: 0
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0.8152367
+      outSlope: 0.8152367
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.057860263
+    - serializedVersion: 3
+      time: 1
+      value: 10
+      inSlope: 35.351673
+      outSlope: 35.351673
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.024017453
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

@@ -39,7 +39,7 @@ public class GameFlow : MonoBehaviour
     {
         if(count + 1 > maxMapCount)
         {
-            mapManager.CreatMap_StartEnd();
+            //mapManager.CreatMap_StartEnd();
         }
     }
 

@@ -9,10 +9,13 @@ public class Block : MonoBehaviour
 {
     public int health = 1;
     public int score = 0;
+    public int scoreMutiply = 100;
     public AudioClip[] audioClips;
     public AudioMixerGroup audioGroup;
     public bool hit;
-    public LayerMask layerMask;
+    [Range(0,1)]
+    public float haveScoreRate;
+    public AnimationCurve scoreRateCurve;
 
     AudioSource audio;
     BoxCollider2D collider2D;
@@ -23,8 +26,17 @@ public class Block : MonoBehaviour
         gameObject.layer = 6;
         animation = GetComponent<Animation>();
         collider2D = GetComponent<BoxCollider2D>();
+    }
 
-
+    private void Start()
+    {
+        float random = Random.value;
+        if(random < haveScoreRate)
+        {
+            random = Random.value;
+            score = (int)scoreRateCurve.Evaluate(random) * scoreMutiply;
+        }
+        
     }
 
     private void Update()
@@ -63,10 +75,5 @@ public class Block : MonoBehaviour
             ScoreManager.instance.AddScore(score);
             Destroy(gameObject);
         }
-    }
-
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        
     }
 }
