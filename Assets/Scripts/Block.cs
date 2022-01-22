@@ -16,6 +16,9 @@ public class Block : MonoBehaviour
     [Range(0,1)]
     public float haveScoreRate;
     public AnimationCurve scoreRateCurve;
+    public GameObject destoryBlockEffect;
+    public GameObject goldBurstEffect;
+    public GameObject treatureBlockEffect;
 
     AudioSource audio;
     BoxCollider2D collider2D;
@@ -35,6 +38,11 @@ public class Block : MonoBehaviour
         {
             random = Random.value;
             score = (int)scoreRateCurve.Evaluate(random) * scoreMutiply;
+            if(score > 0)
+            {
+                Instantiate(treatureBlockEffect, transform).transform.parent = transform;
+            }
+            
         }
         
     }
@@ -72,7 +80,13 @@ public class Block : MonoBehaviour
 
         if (health == 0)
         {
-            ScoreManager.instance.AddScore(score);
+            if(score > 0)
+            {
+                ScoreManager.instance.AddScore(score);
+                Instantiate(goldBurstEffect, transform.position, Quaternion.identity);
+            }
+            
+            Instantiate(destoryBlockEffect, transform.position, Quaternion.identity);
             Destroy(gameObject);
         }
     }
