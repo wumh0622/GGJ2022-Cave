@@ -10,39 +10,49 @@ public class PlayerController : MonoBehaviour
 	public bool IsInGround;
 	public bool IsDown;
 	public bool IsUnderGround;
+	public bool IsJump;
 	public Vector3 Velocity;
 
 	[Header("Setting Param")]
 	[SerializeField]
-	private float moveSpeed = 0;
+	private float _moveSpeed = 2;
 
 	[SerializeField]
-	private float jumpSpeed = 0;
+	private float _jumpSpeed = 15;
 
+	[Header("DigBox")]
+	[SerializeField]
+	private Vector2 _digOffset;
+	[SerializeField]
+	private Vector2 _digSize;
+
+	[SerializeField]
+	private LayerMask _digLayerMask;
 
 	private bool _isUnderGround = false;
 	private bool _inGround = false;
 	private bool _isDown = false;
+	private bool _isJump = false;
 
-	private Rigidbody _rb;
-
+	private Rigidbody2D _rb;
+	private RaycastHit2D[] _hits;
+	public float frontDistance = 10;
 	void Start()
 	{
-		_rb = GetComponent<Rigidbody>();
-		_rb.useGravity = true;
+		_rb = GetComponent<Rigidbody2D>();
 	}
 
 	void Update()
 	{
-		transform.Translate(Vector3.right * moveSpeed * Time.deltaTime);
+		Move();
 
 		if (_isUnderGround)
 		{
-			UnderGroundMove();
+			UnderGroundAction();
 		}
 		else
 		{
-			InGroundMove();
+			InGroundAction();
 		}
 
 		ChangePosStatus();
@@ -57,6 +67,7 @@ public class PlayerController : MonoBehaviour
 		IsInGround = _inGround;
 		IsDown = _isDown;
 		Velocity = _rb.velocity;
+		IsJump = _isJump;
 	}
 
 	private void ChangePosStatus()
@@ -69,21 +80,45 @@ public class PlayerController : MonoBehaviour
 
 			if (_isUnderGround)
 			{
-				_rb.useGravity = false;
-				_rb.velocity = Vector3.zero;
+				_rb.gravityScale = 0;
+				_rb.velocity = Vector2.right * _moveSpeed;
 			}
 			else
 			{
-				_rb.useGravity = true;
+				_rb.gravityScale = 1;
 			}
 		}
 	}
 
-	private void InGroundMove()
+	private void Move()
+	{
+		_hits = Physics2D.RaycastAll(new Vector2(transform.position.x, transform.position.y), Vector2.right, frontDistance);
+		bool hasObstacle = false;
+		foreach (var hit in _hits)
+		{
+			if (hit.collider != null && hit.collider.tag != "Player")
+			{
+				hasObstacle = true;
+				break;
+			}
+		}
+
+		if (hasObstacle)
+		{
+			_rb.velocity = new Vector2(0, _rb.velocity.y);
+		}
+		else
+		{
+			_rb.velocity = new Vector2(_moveSpeed, _rb.velocity.y);
+		}
+
+	}
+
+	private void InGroundAction()
 	{
 		if (_inGround)
 		{
-			if (Input.GetKeyDown(KeyCode.W) && !_isDown)
+			if (Input.GetKeyDown(KeyCode.W) && !_isDown && !_isJump)
 			{
 				Jump();
 			}
@@ -98,7 +133,7 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-	private void UnderGroundMove()
+	private void UnderGroundAction()
 	{
 		if (Input.GetMouseButtonDown(0))
 		{
@@ -108,11 +143,9 @@ public class PlayerController : MonoBehaviour
 
 	private void Jump()
 	{
-		print("Jump");
-
-		_inGround = false;
-
-		_rb.AddForce(Vector3.up * jumpSpeed * 10);
+		_isJump = true;
+		print($"Jump   Jump {_isJump}, Ground {_inGround}");
+		_rb.AddForce(Vector2.up * _jumpSpeed * 10);
 	}
 
 	private void Down(bool isDown)
@@ -131,15 +164,60 @@ public class PlayerController : MonoBehaviour
 
 	private void Dig()
 	{
-		print("Dig");
+		var point = new Vector2(transform.position.x, transform.position.y) + _digOffset;
+		var colliders = Physics2D.OverlapBoxAll(point, _digSize, 0, (int)_digLayerMask);
+
+		if (colliders.Length > 0)
+		{
+			print("Dig");
+
+			foreach (var collider in colliders)
+			{
+				if (!collider.TryGetComponent<Block>(out var block))
+				{
+					Debug.LogError($"Collider {collider.name} No Block.cs");
+					continue;
+				}
+
+				block.Mining();
+			}
+		}
 	}
 
-	private void OnTriggerEnter(Collider other)
+	private void OnTriggerEnter2D(Collider2D other)
 	{
-		if (other.tag == "Ground" && !_inGround)
+		if (other.tag == "Ground")
 		{
-			print($"TriggerEnter {other.name}");
-			_inGround = true;
+			_isJump = false;
+			print($"TriggerEnter Jump {_isJump}, Ground {_inGround}");
 		}
+	}
+
+	private void OnTriggerStay2D(Collider2D other)
+	{
+		if (other.tag == "Ground" && !_isJump)
+		{
+			_inGround = true;
+			print($"TriggerStay Jump {_isJump}, Ground {_inGround}");
+		}
+	}
+
+	private void OnTriggerExit2D(Collider2D other)
+	{
+		if (other.tag == "Ground")
+		{
+			_inGround = false;
+
+			print($"TriggerExit Jump {_isJump}, Ground {_inGround}");
+		}
+	}
+
+	public void OnDrawGizmosSelected()
+	{
+		//Gizmos.color = Color.white;
+		//Gizmos.DrawCube(transform.position + new Vector3(_digOffset.x, _digOffset.y, 0), new Vector3(_digSize.x, _digSize.y, 0));
+
+		Gizmos.color = Color.red;
+		Gizmos.DrawRay(transform.position, Vector3.right * frontDistance);
 	}
 }

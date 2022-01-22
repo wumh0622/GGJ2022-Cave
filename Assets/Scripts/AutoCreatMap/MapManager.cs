@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class MapManager : MonoBehaviour
 {
@@ -8,6 +9,8 @@ public class MapManager : MonoBehaviour
     public Transform mPlayerCenterPos = null;
     [Header("地圖中心點")]
     public Vector2 mMapCenter = Vector2.zero;
+
+    public UnityEvent<int> onMapCreate;
 
     private Transform mMapParent = null;
     private MapData mTopMapData = null, mDownMapData = null;
@@ -79,6 +82,7 @@ public class MapManager : MonoBehaviour
             mCacheCreatPos.y -= mDownMapData.mMapY;
             EnqueuePool(Instantiate(GetMapObj(mDownMapData), mCacheCreatPos, Quaternion.identity, mMapParent), false);
             mCacheXIndex++;
+            onMapCreate.Invoke(mCacheXIndex);
             mCacheCheckNextXPos = mMapCenter.x + (mTopMapData.mMapX * (mCacheXIndex - 2));
         }
     }
