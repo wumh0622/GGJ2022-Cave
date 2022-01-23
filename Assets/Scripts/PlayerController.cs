@@ -56,7 +56,7 @@ public class PlayerController : MonoBehaviour
 		_jumpSpeed = JumpSpeed;
 	}
 
-	void FixedUpdate()
+	void Update()
 	{
 		if (_isUnderGround)
 		{
@@ -302,34 +302,34 @@ public class PlayerController : MonoBehaviour
 
 	private void OnTriggerEnter2D(Collider2D other)
 	{
-		if (other.tag == "Ground")
-		{
-			_isJump = false;
+
 			//print($"TriggerEnter Jump {_isJump}, Ground {_inGround}");
-		}
-		else if (other.tag == "Item")
+
+		if (other.tag == "Item")
 		{
 			var itemData = other.GetComponent<ItemInfo>();
-			OnGetItem(itemData);
+			if(itemData)
+            {
+				OnGetItem(itemData);
+			}
+			
 		}
 	}
 
 	private void OnTriggerStay2D(Collider2D other)
 	{
-		if (other.tag == "Ground" && !_isJump)
-		{
+
 			_inGround = true;
-			//print($"TriggerStay Jump {_isJump}, Ground {_inGround}");
-		}
+		_isJump = false;
+		//print($"TriggerStay Jump {_isJump}, Ground {_inGround}");
 	}
 
 	private void OnTriggerExit2D(Collider2D other)
 	{
-		if (other.tag == "Ground")
-		{
+
 			_inGround = false;
 			//print($"TriggerExit Jump {_isJump}, Ground {_inGround}");
-		}
+
 	}
 
 	public void OnDrawGizmosSelected()

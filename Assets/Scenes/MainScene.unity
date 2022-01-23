@@ -699,10 +699,6 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 3096490098575909052, guid: 496269df3249b1a45a8c3e2f8e4c8444, type: 3}
-      propertyPath: DigLayerMask.m_Bits
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3096490098575909054, guid: 496269df3249b1a45a8c3e2f8e4c8444, type: 3}
       propertyPath: m_RootOrder
       value: 5

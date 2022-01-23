@@ -19,6 +19,7 @@ public class GameFlow : MonoBehaviour
     public DeadZone[] deadZones;
 
     public int maxMapCount = 10;
+    bool lavaIsStop = false;
 
     private void Awake()
     {
@@ -40,6 +41,26 @@ public class GameFlow : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            if(lavaIsStop)
+            {
+                lavaIsStop = false;
+                foreach (DeadZone item in deadZones)
+                {
+                    item.GameStart();
+                }
+            }
+            else
+            {
+                StopLava();
+            }
+            
+        }
+    }
+
     public void Dead()
     {
         player.enabled = false;
@@ -52,6 +73,7 @@ public class GameFlow : MonoBehaviour
         {
             item.GameStop();
         }
+        lavaIsStop = true;
     }
 
     void OnRoomCreate(int count)
