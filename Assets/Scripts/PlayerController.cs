@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerController : MonoBehaviour
 {
@@ -43,8 +44,10 @@ public class PlayerController : MonoBehaviour
 	private Rigidbody2D _rb;
 	private float _originGravityScale;
 
-	private float _itemEffectSec;
-	private string _itemType;
+	public float _itemEffectSec;
+	public string _itemType;
+
+	public UnityEvent<string, float> onGetItem;
 
 	void Start()
 	{
@@ -245,7 +248,7 @@ public class PlayerController : MonoBehaviour
 
 	private void OnGetItem(ItemInfo itemInfo)
 	{
-		itemInfo.GetItemInfo(out var itemType, out var value, out var effectSec);
+		itemInfo.GetItemInfo(out var key, out var itemType, out var value, out var effectSec);
 
 		if (value < 0)
 		{
@@ -270,6 +273,7 @@ public class PlayerController : MonoBehaviour
 
 		_itemType = itemType;
 		_itemEffectSec = effectSec;
+		onGetItem.Invoke(key, effectSec);
 	}
 
 	private void OnItemTimeOut(string itemType)
