@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerController : MonoBehaviour
 {
@@ -43,8 +44,13 @@ public class PlayerController : MonoBehaviour
 	private Rigidbody2D _rb;
 	private float _originGravityScale;
 
-	private float _itemEffectSec;
-	private string _itemType;
+	public float _itemEffectSec;
+	public string _itemType;
+
+	public CameraControl cameraControl;
+	public MapManager mapManager;
+
+	public UnityEvent<string, float> onGetItem;
 
 	void Start()
 	{
@@ -56,7 +62,7 @@ public class PlayerController : MonoBehaviour
 		_jumpSpeed = JumpSpeed;
 	}
 
-	void FixedUpdate()
+	void Update()
 	{
 		if (_isUnderGround)
 		{
@@ -99,13 +105,16 @@ public class PlayerController : MonoBehaviour
 
 			if (_isUnderGround)
 			{
+				cameraControl.SwitchToDown(mapManager.GetSafePoint(false));
 				_rb.gravityScale = 0;
 				SetVelocity(_rb.velocity.x, 0, false);
 			}
 			else
 			{
+				cameraControl.SwitchToTop(mapManager.GetSafePoint(true));
 				_rb.gravityScale = _originGravityScale;
 			}
+			
 		}
 	}
 
@@ -245,7 +254,7 @@ public class PlayerController : MonoBehaviour
 
 	private void OnGetItem(ItemInfo itemInfo)
 	{
-		itemInfo.GetItemInfo(out var itemType, out var value, out var effectSec);
+		itemInfo.GetItemInfo(out var key, out var itemType, out var value, out var effectSec);
 
 		if (value < 0)
 		{
@@ -270,6 +279,7 @@ public class PlayerController : MonoBehaviour
 
 		_itemType = itemType;
 		_itemEffectSec = effectSec;
+		onGetItem.Invoke(key, effectSec);
 	}
 
 	private void OnItemTimeOut(string itemType)
@@ -302,34 +312,35 @@ public class PlayerController : MonoBehaviour
 
 	private void OnTriggerEnter2D(Collider2D other)
 	{
-		if (other.tag == "Ground")
-		{
-			_isJump = false;
+
 			//print($"TriggerEnter Jump {_isJump}, Ground {_inGround}");
-		}
-		else if (other.tag == "Item")
+
+		if (other.tag == "Item")
 		{
 			var itemData = other.GetComponent<ItemInfo>();
-			OnGetItem(itemData);
+			if(itemData)
+            {
+				OnGetItem(itemData);
+				Destroy(other.gameObject);
+			}
+			
 		}
 	}
 
 	private void OnTriggerStay2D(Collider2D other)
 	{
-		if (other.tag == "Ground" && !_isJump)
-		{
+
 			_inGround = true;
-			//print($"TriggerStay Jump {_isJump}, Ground {_inGround}");
-		}
+		_isJump = false;
+		//print($"TriggerStay Jump {_isJump}, Ground {_inGround}");
 	}
 
 	private void OnTriggerExit2D(Collider2D other)
 	{
-		if (other.tag == "Ground")
-		{
+
 			_inGround = false;
 			//print($"TriggerExit Jump {_isJump}, Ground {_inGround}");
-		}
+
 	}
 
 	public void OnDrawGizmosSelected()

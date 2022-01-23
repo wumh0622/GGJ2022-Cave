@@ -16,5 +16,7 @@ MonoBehaviour:
   mFixedEndMap: []
   mMapPrefabs:
   - {fileID: 1113101072244196675, guid: 85677421ee3d9dc43a43f8e11b6595ad, type: 3}
+  - {fileID: 21746198977460098, guid: 691c2a89a04194047907717f003a8414, type: 3}
+  - {fileID: 789569526302080594, guid: 8598b307f18a3ca429e278aa01c1d025, type: 3}
   mMapX: 38.2
-  mMapY: 10.6
+  mMapY: 10.24

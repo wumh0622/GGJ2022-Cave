@@ -32,18 +32,19 @@ public class Block : MonoBehaviour
 
     private void Start()
     {
-        float random = Random.value;
-        if(random < haveScoreRate)
+        //float random = Random.value;
+        //if(random < haveScoreRate)
+        //{
+        //    random = Random.value;
+        //    score = (int)scoreRateCurve.Evaluate(random) * scoreMutiply;
+        if (score > 0)
         {
-            random = Random.value;
-            score = (int)scoreRateCurve.Evaluate(random) * scoreMutiply;
-            if(score > 0)
-            {
-                Instantiate(treatureBlockEffect, transform).transform.parent = transform;
-            }
-            
+            score *= scoreMutiply;
+            Instantiate(treatureBlockEffect, transform).transform.parent = transform;
         }
-        
+
+        //}
+
     }
 
     private void Update()
@@ -70,7 +71,7 @@ public class Block : MonoBehaviour
         source.outputAudioMixerGroup = audioGroup;
         source.clip = audioClips[Random.Range(0, audioClips.Length - 1)];
 
-        if (health == 0)
+        if (health <= 0)
         {
             source.pitch = Random.Range(0.4f, 0.6f);
         }
@@ -82,7 +83,7 @@ public class Block : MonoBehaviour
         source.Play();
         Destroy(sound, source.clip.length);
 
-        if (health == 0)
+        if (health <= 0)
         {
             if (score > 0)
             {

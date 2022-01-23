@@ -222,7 +222,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff5c4ffcd98ebc44bbfc0071043c7dd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 5
+  health: 1
   score: 0
   scoreMutiply: 100
   audioClips:

@@ -15,6 +15,7 @@ public class MapManager : MonoBehaviour
     private Transform mMapParent = null;
     private MapData mTopMapData = null, mDownMapData = null;
     private Queue<GameObject> mCacheTopMapObj = new Queue<GameObject>(), mCacheDownMapObj = new Queue<GameObject>();
+    private List<MapSafePoint> mTopSafePoints = new List<MapSafePoint>(), mDownSafePoints = new List<MapSafePoint>();
     private int mCacheXIndex = 0;
     private Vector3 mCacheCreatPos = Vector3.zero;
     private float mCacheCheckNextXPos = 0;
@@ -95,19 +96,26 @@ public class MapManager : MonoBehaviour
         if (iTop)
         {
             mCacheTopMapObj.Enqueue(iObj);
+            mTopSafePoints.Add(iObj.GetComponent<MapSafePoint>());
         }
         else
         {
             mCacheDownMapObj.Enqueue(iObj);
+            mDownSafePoints.Add(iObj.GetComponent<MapSafePoint>());
         }
     }
     private void DestoryPool()
     {
         Destroy(mCacheTopMapObj.Dequeue());
         Destroy(mCacheDownMapObj.Dequeue());
+        mTopSafePoints.RemoveAt(0);
+        mDownSafePoints.RemoveAt(0);
     }
     private void ClearAllPool()
     {
+        mTopSafePoints.Clear();
+        mDownSafePoints.Clear();
+
         int aMaxCount = mCacheTopMapObj.Count;
         for (int i = 0; i < aMaxCount; i++)
         {
@@ -116,6 +124,27 @@ public class MapManager : MonoBehaviour
     }
     #endregion
 
+    #region 取得當前切換安全點
+    public Vector3 GetSafePoint(bool iTop)
+    {
+        try
+        {
+            if (iTop)
+            {
+                return mTopSafePoints[1].GetNearSafePoint(mPlayerCenterPos.position);
+            }
+            else
+            {
+                return mDownSafePoints[1].GetNearSafePoint(mPlayerCenterPos.position);
+            }
+        }
+        catch (System.Exception iMessage)
+        {
+            Debug.LogError($"MapManager Get SafePoints Fail GetIsTop => {iTop}   ErrorMessage= {iMessage}");
+            throw;
+        }
+    }
+    #endregion
 
     public void CreatMap_Reset()
     {
