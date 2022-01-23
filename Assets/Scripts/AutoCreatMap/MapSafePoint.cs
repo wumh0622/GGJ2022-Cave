@@ -9,31 +9,35 @@ public class MapSafePoint : MonoBehaviour
     {
         if (mSafePoint != null && mSafePoint.Count > 0)
         {
-            Vector3 iPlayerXPos = OnlyGetXPos(iPlayerPos);
+            float iPlayerXPos = iPlayerPos.x;
             Vector3 aReturnPos = mSafePoint[0].position;
-            float aDis = Vector3.SqrMagnitude(iPlayerXPos - OnlyGetXPos(aReturnPos));
+            float aDis = Mathf.Abs(iPlayerXPos - aReturnPos.x);
+            //Debug.Log("第一個距離" + aDis);
             float aAntoherDis = aDis + 1;
             for (int i = 1; i < mSafePoint.Count; i++)
             {
-                aAntoherDis = Vector3.SqrMagnitude(iPlayerPos - OnlyGetXPos(mSafePoint[1].position));
+                aAntoherDis =Mathf.Abs(iPlayerXPos - mSafePoint[i].position.x);
+                //Debug.Log($"第{i}個距離" + aAntoherDis);
                 if (aAntoherDis < aDis)
                 {
-                    aReturnPos = mSafePoint[1].position;
+                    aReturnPos = mSafePoint[i].position;
                     aDis = aAntoherDis;
                 }
             }
+            //Debug.Log("ReturnPos"+aReturnPos);
             return aReturnPos;
         }
         Debug.LogError("SafePoint Array is Null");
         return iPlayerPos;
     }
 
-    private Vector3 OnlyGetXPos(Vector3 iPos)
-    {
-        iPos.y = 0;
-        iPos.z = 0;
-        return iPos;
-    }
+
+    //public Transform Player;
+    //[ContextMenu("Test")]
+    //public void Test()
+    //{
+    //    GetNearSafePoint(Player.position);
+    //}
 
     [Header("初始X位置")]
     public float mFirstX = 0;

@@ -3795,6 +3795,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3061668057096393420}
   - component: {fileID: 3061668057096393419}
+  - component: {fileID: 5726987063177941118}
   m_Layer: 0
   m_Name: UpperRoom_11
   m_TagString: Untagged
@@ -3833,6 +3834,25 @@ Grid:
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 0
   m_CellSwizzle: 0
+--- !u!114 &5726987063177941118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3061668057096393418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4239ea3c9ee92a347ac5ded71d8fc7c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mSafePoint:
+  - {fileID: 971002420382768365}
+  - {fileID: 1204166530575337943}
+  - {fileID: 676351140738086593}
+  mFirstX: 0
+  mCreatCount: 0
+  mCreatGap: 0
 --- !u!1 &8250260905445327120
 GameObject:
   m_ObjectHideFlags: 0
