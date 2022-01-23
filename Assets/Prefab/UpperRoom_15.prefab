@@ -1305,9 +1305,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mSafePoint:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 5678787364099566994}
+  - {fileID: 5980962410948704424}
+  - {fileID: 5392017446910265278}
   mFirstX: 0
   mCreatCount: 0
   mCreatGap: 0
