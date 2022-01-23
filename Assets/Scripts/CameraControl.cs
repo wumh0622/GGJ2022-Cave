@@ -1,6 +1,5 @@
 using UnityEngine;
 using DG.Tweening;
-
 public class CameraControl : MonoBehaviour
 {
     public LockCameraY mLockCameraY = null;    
@@ -15,20 +14,6 @@ public class CameraControl : MonoBehaviour
     public float mPlayerMoveTime = 0, mCameraMoveTime = 0;
     public float aReturnDelayGap = 0.25f;
 
-    public MapManager testMap = null;
-    public bool testTop = false;
-    [ContextMenu("Test")]
-    void test()
-    {
-        if (testTop)
-        {
-            SwitchToTop(testMap.GetSafePoint(testTop));
-        }
-        else
-        {
-            SwitchToDown(testMap.GetSafePoint(testTop));
-        }
-    }
     public void SwitchToTop(Vector3 iMovePoint)
     {
         MoveTo(iMovePoint, mTrueTopY);
