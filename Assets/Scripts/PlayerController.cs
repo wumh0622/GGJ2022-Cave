@@ -2,26 +2,37 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-	[Header("Status Info")]
-	public bool IsInGround;
-	public bool IsDown;
-	public bool IsUnderGround;
-	public bool IsJump;
-	public Vector3 Velocity;
-
-	[Header("Show Collider")]
+	[Header("Show ColliderCheck")]
 	public bool ShowDigBox;
 	public bool ShowFrontCheck;
-
 
 	[Header("Base Param")]
 	public float OriginMoveSpeed = 5f;
 	public float JumpSpeed = 60f;
 	public float OriginAttack = 1f;
 	public float FrontCheckDistance = 0.6f;
+	public float ChangeMapCD = 2f;
+
+
+	[Header("Status Info")]
+	public Vector3 Velocity;
+	[SerializeField]
+	private bool _canChangeMap = true;
+	[SerializeField]
+	private bool _isUnderGround = false;
+	[SerializeField]
+	private bool _inGround = false;
+	[SerializeField]
+	private bool _isDown = false;
+	[SerializeField]
+	private bool _isJump = false;
+
+	public string _itemType;
+	public float _itemEffectSec;
 
 	[Header("UnderGroundMove")]
 	public float MinRange = 3f;
@@ -31,39 +42,37 @@ public class PlayerController : MonoBehaviour
 	public Vector2 DigSize;
 	public LayerMask DigLayerMask;
 
+	public CameraControl cameraControl;
+	public MapManager mapManager;
+	public Text ChangeMapCDText;
+
+	public UnityEvent<string, float> onGetItem;
 
 	private float _moveSpeed;
 	private float _jumpSpeed;
 	private float _attack;
-
-	private bool _isUnderGround = false;
-	private bool _inGround = false;
-	private bool _isDown = false;
-	private bool _isJump = false;
+	private float _curMapCD;
 
 	private Rigidbody2D _rb;
 	private float _originGravityScale;
 
-	public float _itemEffectSec;
-	public string _itemType;
-
-	public CameraControl cameraControl;
-	public MapManager mapManager;
-
-	public UnityEvent<string, float> onGetItem;
-
 	void Start()
 	{
 		_rb = GetComponent<Rigidbody2D>();
+		_rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+
 		_originGravityScale = _rb.gravityScale;
 
 		_moveSpeed = OriginMoveSpeed;
 		_attack = OriginAttack;
 		_jumpSpeed = JumpSpeed;
+		_curMapCD = ChangeMapCD;
 	}
 
 	void Update()
 	{
+		ChangePosStatus();
+
 		if (_isUnderGround)
 		{
 			UnderGroundAction();
@@ -73,23 +82,34 @@ public class PlayerController : MonoBehaviour
 			InGroundAction();
 		}
 
-		ChangePosStatus();
-
 		Move();
 
-		ItemTimer();
+		Timer();
 
 		Show();
 	}
 
-	private void ItemTimer()
+	private void Timer()
 	{
+		var deltaTime = Time.deltaTime;
+
 		if (_itemEffectSec > 0)
 		{
-			_itemEffectSec -= Time.fixedDeltaTime;
+			_itemEffectSec -= deltaTime;
 			if (_itemEffectSec <= 0)
 			{
+				_itemEffectSec = 0;
 				OnItemTimeOut(_itemType);
+			}
+		}
+
+		if (_curMapCD > 0)
+		{
+			_curMapCD -= deltaTime;
+			if (_curMapCD <= 0)
+			{
+				_curMapCD = 0;
+				_canChangeMap = true;
 			}
 		}
 	}
@@ -97,40 +117,53 @@ public class PlayerController : MonoBehaviour
 	#region Input
 	private void ChangePosStatus()
 	{
+		if (!_canChangeMap)
+		{
+			return;
+		}
+
 		if (Input.GetKeyDown(KeyCode.Q))
 		{
+			_canChangeMap = false;
+			_curMapCD = ChangeMapCD;
+
 			_isUnderGround = !_isUnderGround;
 
 			print($"Click Q, new PosStatus {_isUnderGround}");
 
-			if (_isUnderGround)
+			try
 			{
-				cameraControl.SwitchToDown(mapManager.GetSafePoint(false));
-				_rb.gravityScale = 0;
-				SetVelocity(_rb.velocity.x, 0, false);
+				if (_isUnderGround)
+				{
+					cameraControl.SwitchToTop(mapManager.GetSafePoint(true));
+				}
+				else
+				{
+					cameraControl.SwitchToDown(mapManager.GetSafePoint(false));
+				}
 			}
-			else
+			catch (System.Exception ex)
 			{
-				cameraControl.SwitchToTop(mapManager.GetSafePoint(true));
-				_rb.gravityScale = _originGravityScale;
+				Debug.LogError(ex.Message);
 			}
-			
+
+			_rb.gravityScale = _isUnderGround ? 0 : _originGravityScale;
 		}
 	}
 
 	private void InGroundAction()
 	{
-		if (_inGround)
+		if (_inGround && !_isJump)
 		{
-			if (Input.GetKeyDown(KeyCode.W) && !_isDown && !_isJump)
+			if (Input.GetKeyDown(KeyCode.W) && !_isDown)
 			{
 				OnJump();
 			}
-			else if (Input.GetKeyDown(KeyCode.S))
+			if (Input.GetKeyDown(KeyCode.S))
 			{
 				OnDown(true);
 			}
-			else if (Input.GetKeyUp(KeyCode.S))
+			if (Input.GetKeyUp(KeyCode.S))
 			{
 				OnDown(false);
 			}
@@ -174,40 +207,32 @@ public class PlayerController : MonoBehaviour
 		var moveY = Input.mousePosition.y - screenPos.y;
 
 		var distance = Mathf.Abs(moveY);
+
+		float newY = 0f;
 		if (distance >= MinRange)
 		{
-			float newY = moveY < 0 ? -OriginMoveSpeed : OriginMoveSpeed;
+			newY = moveY > 0 ? _moveSpeed : -_moveSpeed;
+		}
 
-			SetVelocity(_rb.velocity.x, newY);
-		}
-		else
-		{
-			SetVelocity(_rb.velocity.x, 0, false);
-		}
+		SetVelocity(_rb.velocity.x, newY);
 	}
 
-	private void SetVelocity(float newX, float newY, bool alwaysRefresh = true)
+	private void SetVelocity(float newX, float newY)
 	{
 		float x = _rb.velocity.x;
 		float y = _rb.velocity.y;
-		bool isSame = true;
 
 		if (x != newX)
 		{
-			isSame = false;
 			x = newX;
 		}
 
 		if (y != newY)
 		{
-			isSame = false;
 			y = newY;
 		}
 
-		if (alwaysRefresh || !isSame)
-		{
-			_rb.velocity = new Vector2(x, y);
-		}
+		_rb.velocity = new Vector2(x, y);
 	}
 	#endregion Move
 
@@ -274,7 +299,7 @@ public class PlayerController : MonoBehaviour
 				break;
 			default:
 				Debug.LogError("Invalid ItemType " + itemType);
-				break;
+				return;
 		}
 
 		_itemType = itemType;
@@ -303,44 +328,35 @@ public class PlayerController : MonoBehaviour
 	private void Show()
 	{
 		//Show
-		IsUnderGround = _isUnderGround;
-		IsInGround = _inGround;
-		IsDown = _isDown;
 		Velocity = _rb.velocity;
-		IsJump = _isJump;
 	}
 
 	private void OnTriggerEnter2D(Collider2D other)
 	{
-
-			//print($"TriggerEnter Jump {_isJump}, Ground {_inGround}");
+		//print($"TriggerEnter Jump {_isJump}, Ground {_inGround}");
 
 		if (other.tag == "Item")
 		{
 			var itemData = other.GetComponent<ItemInfo>();
-			if(itemData)
-            {
+			if (itemData)
+			{
 				OnGetItem(itemData);
 				Destroy(other.gameObject);
 			}
-			
 		}
 	}
 
 	private void OnTriggerStay2D(Collider2D other)
 	{
-
-			_inGround = true;
+		_inGround = true;
 		_isJump = false;
 		//print($"TriggerStay Jump {_isJump}, Ground {_inGround}");
 	}
 
 	private void OnTriggerExit2D(Collider2D other)
 	{
-
-			_inGround = false;
-			//print($"TriggerExit Jump {_isJump}, Ground {_inGround}");
-
+		_inGround = false;
+		//print($"TriggerExit Jump {_isJump}, Ground {_inGround}");
 	}
 
 	public void OnDrawGizmosSelected()
