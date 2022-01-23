@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+using DG.Tweening;
 
 [RequireComponent(typeof(BoxCollider2D))]
 [RequireComponent(typeof(Animation))]
@@ -19,7 +20,7 @@ public class Block : MonoBehaviour
     public GameObject destoryBlockEffect;
     public GameObject goldBurstEffect;
     public GameObject treatureBlockEffect;
-
+    public Vector3 mChangeScale = Vector3.one;
     BoxCollider2D collider2D;
     Animation animation;
 
@@ -47,13 +48,13 @@ public class Block : MonoBehaviour
 
     }
 
-    private void Update()
+    /*private void Update()
     {
         if(Input.GetKeyDown(KeyCode.R))
         {
             Mining(1.0f);
         }
-    }
+    }*/
 
     public void Mining(float damage)
     {
@@ -64,7 +65,7 @@ public class Block : MonoBehaviour
             animation.Play();
         }
 
-
+        transform.DOScale(mChangeScale, 0.1f).SetLoops(2, LoopType.Yoyo);
         GameObject sound = new GameObject("BlockSound");
         AudioSource source = sound.gameObject.AddComponent<AudioSource>();
         source.playOnAwake = false;
