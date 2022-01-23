@@ -1354,16 +1354,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mSafePoint:
-  - {fileID: 1703512734166493440}
-  - {fileID: 2721144851268984386}
-  - {fileID: 6165943287241647998}
-  - {fileID: 6765986955833132124}
-  - {fileID: 1774689510900969305}
-  - {fileID: 5625531674785001020}
-  - {fileID: 1657298515368575381}
-  - {fileID: 8369140246430433422}
-  - {fileID: 112967697294268937}
-  - {fileID: 4077246745517760153}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   mFirstX: -7
   mCreatCount: 10
   mCreatGap: 4
