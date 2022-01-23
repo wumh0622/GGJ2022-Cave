@@ -46,9 +46,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20e37250448ab8348bc4cf7553ce1e1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Key: MoveDeBuff
   ItemType: Move
-  Value: 5
-  EffectSeconds: 5
+  Value: 3
+  EffectSeconds: 10
 --- !u!58 &370191160323991689
 CircleCollider2D:
   m_ObjectHideFlags: 0
