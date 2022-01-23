@@ -111,17 +111,17 @@ public class PlayerController : MonoBehaviour
 
 	private void InGroundAction()
 	{
-		if (_inGround)
+		if (_inGround && !_isJump)
 		{
-			if (Input.GetKeyDown(KeyCode.W) && !_isDown && !_isJump)
+			if (Input.GetKeyDown(KeyCode.W) && !_isDown)
 			{
 				OnJump();
 			}
-			else if (Input.GetKeyDown(KeyCode.S))
+			if (Input.GetKeyDown(KeyCode.S))
 			{
 				OnDown(true);
 			}
-			else if (Input.GetKeyUp(KeyCode.S))
+			if (Input.GetKeyUp(KeyCode.S))
 			{
 				OnDown(false);
 			}
