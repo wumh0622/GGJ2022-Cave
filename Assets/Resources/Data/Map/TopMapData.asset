@@ -17,5 +17,8 @@ MonoBehaviour:
   mMapPrefabs:
   - {fileID: 3237975480789346194, guid: 0c634e1ad38419645b4c737b1dbf4f75, type: 3}
   - {fileID: 3385043960985204623, guid: 2beae22e2cdda894f9aa411d8e41eb91, type: 3}
+  - {fileID: 2263303075977731949, guid: 2868812b27c7c3c4995a571541288e5a, type: 3}
+  - {fileID: 8324344128969633235, guid: d9d27b9d1617f6a4497c3e367f5234a9, type: 3}
+  - {fileID: 7279895641865299432, guid: 3a9db4d50d91e6c4cab2eb8ec5e41971, type: 3}
   mMapX: 38.2
   mMapY: 10.6
