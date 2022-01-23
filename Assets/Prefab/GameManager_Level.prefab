@@ -61,4 +61,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapManager: {fileID: 0}
   player: {fileID: 0}
+  deadZones:
+  - {fileID: 0}
+  - {fileID: 0}
   maxMapCount: 10

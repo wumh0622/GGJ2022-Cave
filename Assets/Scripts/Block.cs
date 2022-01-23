@@ -7,7 +7,7 @@ using UnityEngine.Audio;
 [RequireComponent(typeof(Animation))]
 public class Block : MonoBehaviour
 {
-    public int health = 1;
+    public float health = 1;
     public int score = 0;
     public int scoreMutiply = 100;
     public AudioClip[] audioClips;
@@ -20,7 +20,6 @@ public class Block : MonoBehaviour
     public GameObject goldBurstEffect;
     public GameObject treatureBlockEffect;
 
-    AudioSource audio;
     BoxCollider2D collider2D;
     Animation animation;
 
@@ -33,59 +32,65 @@ public class Block : MonoBehaviour
 
     private void Start()
     {
-        float random = Random.value;
-        if(random < haveScoreRate)
+        //float random = Random.value;
+        //if(random < haveScoreRate)
+        //{
+        //    random = Random.value;
+        //    score = (int)scoreRateCurve.Evaluate(random) * scoreMutiply;
+        if (score > 0)
         {
-            random = Random.value;
-            score = (int)scoreRateCurve.Evaluate(random) * scoreMutiply;
-            if(score > 0)
-            {
-                Instantiate(treatureBlockEffect, transform).transform.parent = transform;
-            }
-            
+            score *= scoreMutiply;
+            Instantiate(treatureBlockEffect, transform).transform.parent = transform;
         }
-        
+
+        //}
+
     }
 
     private void Update()
     {
         if(Input.GetKeyDown(KeyCode.R))
         {
-            Mining();
+            Mining(1.0f);
         }
     }
 
-    public void Mining()
+    public void Mining(float damage)
     {
-        health--;
+        health-= damage;
 
-        if(animation)
+        if (animation)
         {
             animation.Play();
         }
 
-        if (!audio)
+
+        GameObject sound = new GameObject("BlockSound");
+        AudioSource source = sound.gameObject.AddComponent<AudioSource>();
+        source.playOnAwake = false;
+        source.outputAudioMixerGroup = audioGroup;
+        source.clip = audioClips[Random.Range(0, audioClips.Length - 1)];
+
+        if (health <= 0)
         {
-            audio = gameObject.AddComponent<AudioSource>();
-            audio.playOnAwake = false;
-            audio.outputAudioMixerGroup = audioGroup;
+            source.pitch = Random.Range(0.4f, 0.6f);
+        }
+        else
+        {
+            source.pitch = Random.Range(0.5f, 1.5f);
         }
 
-        if(audio)
-        {
-            audio.clip = audioClips[Random.Range(0, audioClips.Length - 1)];
-            audio.pitch = Random.Range(0.5f, 1.5f);
-            audio.Play();
-        }
+        source.Play();
+        Destroy(sound, source.clip.length);
 
-        if (health == 0)
+        if (health <= 0)
         {
-            if(score > 0)
+            if (score > 0)
             {
                 ScoreManager.instance.AddScore(score);
                 Instantiate(goldBurstEffect, transform.position, Quaternion.identity);
             }
-            
+
             Instantiate(destoryBlockEffect, transform.position, Quaternion.identity);
             Destroy(gameObject);
         }
