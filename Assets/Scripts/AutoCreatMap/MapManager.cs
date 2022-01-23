@@ -131,11 +131,12 @@ public class MapManager : MonoBehaviour
         {
             if (iTop)
             {
-                return mTopSafePoints[1].GetNearSafePoint(mPlayerCenterPos.position);
+
+                return GetSafePointPos(mTopSafePoints);
             }
             else
             {
-                return mDownSafePoints[1].GetNearSafePoint(mPlayerCenterPos.position);
+                return GetSafePointPos(mDownSafePoints);
             }
         }
         catch (System.Exception iMessage)
@@ -143,6 +144,24 @@ public class MapManager : MonoBehaviour
             Debug.LogError($"MapManager Get SafePoints Fail GetIsTop => {iTop}   ErrorMessage= {iMessage}");
             throw;
         }
+    }
+    private Vector3 GetSafePointPos(List<MapSafePoint> iSafePintPool)
+    {
+        Vector3 aReturPos = iSafePintPool[0].GetNearSafePoint(mPlayerCenterPos.position);
+        Vector3 aComparePos = Vector3.zero;
+        float aCurDis = Mathf.Abs(aReturPos.x-mPlayerCenterPos.position.x);
+        float aNextDis = aCurDis + 1;
+        for (int i = 1; i < iSafePintPool.Count; i++)
+        {
+            aComparePos = iSafePintPool[i].GetNearSafePoint(mPlayerCenterPos.position);
+            aNextDis = Mathf.Abs(aComparePos.x - mPlayerCenterPos.position.x);
+            if (aNextDis < aCurDis)
+            {
+                aReturPos = aComparePos;
+                aNextDis = aCurDis;
+            }
+        }
+        return aReturPos;
     }
     #endregion
 
