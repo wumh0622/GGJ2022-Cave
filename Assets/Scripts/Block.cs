@@ -71,7 +71,7 @@ public class Block : MonoBehaviour
         source.outputAudioMixerGroup = audioGroup;
         source.clip = audioClips[Random.Range(0, audioClips.Length - 1)];
 
-        if (health < 0)
+        if (health <= 0)
         {
             source.pitch = Random.Range(0.4f, 0.6f);
         }
@@ -83,7 +83,7 @@ public class Block : MonoBehaviour
         source.Play();
         Destroy(sound, source.clip.length);
 
-        if (health < 0)
+        if (health <= 0)
         {
             if (score > 0)
             {

@@ -64,7 +64,7 @@ public class GameFlow : MonoBehaviour
     public void Dead()
     {
         player.enabled = false;
-        Invoke("StopLava", 10.0f);
+        Invoke("StopLava", 1.0f);
     }
 
     public void StopLava()
