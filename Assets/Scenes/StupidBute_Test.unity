@@ -221,10 +221,6 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3037994022643489046, guid: 691c2a89a04194047907717f003a8414, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8324704274497724871, guid: 691c2a89a04194047907717f003a8414, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -281,10 +277,6 @@ PrefabInstance:
     - target: {fileID: 1113101072244196675, guid: 85677421ee3d9dc43a43f8e11b6595ad, type: 3}
       propertyPath: m_Name
       value: CaveRoom0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1113101072244196675, guid: 85677421ee3d9dc43a43f8e11b6595ad, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8987091269840802566, guid: 85677421ee3d9dc43a43f8e11b6595ad, type: 3}
       propertyPath: m_RootOrder
@@ -403,6 +395,10 @@ PrefabInstance:
     - target: {fileID: 789569526302080594, guid: 8598b307f18a3ca429e278aa01c1d025, type: 3}
       propertyPath: m_Name
       value: CaveRoom2
+      objectReference: {fileID: 0}
+    - target: {fileID: 789569526302080594, guid: 8598b307f18a3ca429e278aa01c1d025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8736725093468448791, guid: 8598b307f18a3ca429e278aa01c1d025, type: 3}
       propertyPath: m_RootOrder
