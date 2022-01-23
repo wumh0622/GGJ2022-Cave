@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 enum GameFlowType
 {
@@ -45,7 +46,7 @@ public class GameFlow : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            if(lavaIsStop)
+            if (lavaIsStop)
             {
                 lavaIsStop = false;
                 foreach (DeadZone item in deadZones)
@@ -57,14 +58,30 @@ public class GameFlow : MonoBehaviour
             {
                 StopLava();
             }
-            
+
         }
+
+        if(lavaIsStop)
+        {
+            if (Input.anyKeyDown)
+            {
+                Restart();
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            SceneManager.LoadScene(0);
+        }
+
+
     }
 
     public void Dead()
     {
         player.enabled = false;
-        Invoke("StopLava", 1.0f);
+        UIManager.instance.ShowGameOver();
+        Invoke("StopLava", 2.0f);
     }
 
     public void StopLava()
@@ -82,6 +99,11 @@ public class GameFlow : MonoBehaviour
         {
             //mapManager.CreatMap_StartEnd();
         }
+    }
+
+    void Restart()
+    {
+        SceneManager.LoadScene(0);
     }
 
 }

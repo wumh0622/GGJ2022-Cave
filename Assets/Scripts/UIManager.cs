@@ -14,6 +14,7 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager instance;
     public GameObject debugConsole;
+    public GameObject GameOverPanel;
 
     public Text scoreText;
     public Image buffIcon;
@@ -75,5 +76,10 @@ public class UIManager : MonoBehaviour
         buffIcon.gameObject.SetActive(true);
         buffIcon.sprite = iconData[itemName];
         itemTime = time;
+    }
+
+    public void ShowGameOver()
+    {
+        GameOverPanel.SetActive(true);
     }
 }
