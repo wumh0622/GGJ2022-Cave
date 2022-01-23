@@ -47,6 +47,9 @@ public class PlayerController : MonoBehaviour
 	public float _itemEffectSec;
 	public string _itemType;
 
+	public CameraControl cameraControl;
+	public MapManager mapManager;
+
 	public UnityEvent<string, float> onGetItem;
 
 	void Start()
@@ -102,13 +105,16 @@ public class PlayerController : MonoBehaviour
 
 			if (_isUnderGround)
 			{
+				cameraControl.SwitchToDown(mapManager.GetSafePoint(false));
 				_rb.gravityScale = 0;
 				SetVelocity(_rb.velocity.x, 0, false);
 			}
 			else
 			{
+				cameraControl.SwitchToTop(mapManager.GetSafePoint(true));
 				_rb.gravityScale = _originGravityScale;
 			}
+			
 		}
 	}
 
@@ -315,6 +321,7 @@ public class PlayerController : MonoBehaviour
 			if(itemData)
             {
 				OnGetItem(itemData);
+				Destroy(other.gameObject);
 			}
 			
 		}

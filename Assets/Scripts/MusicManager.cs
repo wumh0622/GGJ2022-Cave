@@ -5,7 +5,7 @@ using UnityEngine;
 public class MusicManager : MonoBehaviour
 {
 
-
+    AudioSource Source;
 
     // Start is called before the first frame update
     void Start()
@@ -17,5 +17,10 @@ public class MusicManager : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void FadeOut()
+    {
+
     }
 }
