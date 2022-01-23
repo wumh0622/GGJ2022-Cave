@@ -27,5 +27,8 @@ MonoBehaviour:
   - {fileID: 1121617487808246808, guid: 253ff92bf21e0f44f9f10a4a4c500e50, type: 3}
   - {fileID: 3061668057096393418, guid: 9eba04b4ada72904bad4a0b79f35a41d, type: 3}
   - {fileID: 4669348644766625187, guid: 1a9d49f6fa933a44da715861c4705d3a, type: 3}
+  - {fileID: 8852047454796837176, guid: f6a746059ae0028419d169a38e4067e2, type: 3}
+  - {fileID: 3942078089428760200, guid: fdbd6b77ddf4b58458ccdff1b3f328ed, type: 3}
+  - {fileID: 7623345586941469621, guid: 046438fda72b63b4bb609151822fe8d6, type: 3}
   mMapX: 38.2
   mMapY: 10.6
