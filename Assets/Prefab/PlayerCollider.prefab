@@ -142,23 +142,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea0197f076c036f48a615fe0bcf9ffb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsInGround: 0
-  IsDown: 0
-  IsUnderGround: 0
-  IsJump: 0
-  Velocity: {x: 0, y: 0, z: 0}
   ShowDigBox: 0
   ShowFrontCheck: 0
   OriginMoveSpeed: 5
   JumpSpeed: 85
   OriginAttack: 1
   FrontCheckDistance: 0.66
+  ChangeMapCD: 5
+  Velocity: {x: 0, y: 0, z: 0}
+  _canChangeMap: 1
+  _isUnderGround: 0
+  _inGround: 0
+  _isDown: 0
+  _isJump: 0
+  _itemType: 
+  _itemEffectSec: 0
   MinRange: 70
   DigOffset: {x: 0.5, y: 0}
   DigSize: {x: 1, y: 2}
   DigLayerMask:
     serializedVersion: 2
     m_Bits: 64
+  cameraControl: {fileID: 0}
+  mapManager: {fileID: 0}
+  ChangeMapCDText: {fileID: 0}
+  onGetItem:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!50 &3096490098575909053
 Rigidbody2D:
   serializedVersion: 4
