@@ -71,7 +71,7 @@ public class GameFlow : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {
-            SceneManager.LoadScene(0);
+            SceneManager.LoadScene(1);
         }
 
 
@@ -103,7 +103,7 @@ public class GameFlow : MonoBehaviour
 
     void Restart()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
     }
 
 }
