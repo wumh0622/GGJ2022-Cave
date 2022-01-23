@@ -127,7 +127,7 @@ public class PlayerController : MonoBehaviour
 			_canChangeMap = false;
 			_curMapCD = ChangeMapCD;
 
-			_isUnderGround = !_isUnderGround;
+			
 
 			print($"Click Q, new PosStatus {_isUnderGround}");
 
@@ -146,6 +146,7 @@ public class PlayerController : MonoBehaviour
 			{
 				Debug.LogError(ex.Message);
 			}
+			_isUnderGround = !_isUnderGround;
 
 			_rb.gravityScale = _isUnderGround ? 0 : _originGravityScale;
 		}
