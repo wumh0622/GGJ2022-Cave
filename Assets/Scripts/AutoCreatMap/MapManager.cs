@@ -33,8 +33,8 @@ public class MapManager : MonoBehaviour
     }
     private void LoadData()
     {
-        mTopMapData = (MapData)UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/Resources/Data/Map/TopMapData.asset", typeof(MapData));
-        mDownMapData = (MapData)UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/Resources/Data/Map/DownMapData.asset", typeof(MapData));
+        mTopMapData = Resources.Load<MapData>("Data/Map/TopMapData");//(MapData)UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/Resources/Data/Map/TopMapData.asset", typeof(MapData));
+        mDownMapData = Resources.Load<MapData>("Data/Map/DownMapData");//(MapData)UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/Resources/Data/Map/DownMapData.asset", typeof(MapData));
         if (mTopMapData == null || mDownMapData == null)
         {
             Debug.LogError("Load Map Data Fail");
